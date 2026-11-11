@@ -1,5 +1,4 @@
-
-const CACHE_NAME = "anv-school-v1";
+const CACHE_NAME = "anv-school-v2";
 
 const FILES_TO_CACHE = [
   "./",
@@ -14,7 +13,6 @@ self.addEventListener("install", (event) => {
       return cache.addAll(FILES_TO_CACHE);
     })
   );
-
   self.skipWaiting();
 });
 
@@ -28,7 +26,6 @@ self.addEventListener("activate", (event) => {
       )
     )
   );
-
   self.clients.claim();
 });
 
@@ -36,17 +33,24 @@ self.addEventListener("fetch", (event) => {
   const request = event.request;
   const url = new URL(request.url);
 
+  // Important: Firebase Auth + Google login requests ko bilkul mat chhedo
   if (
     request.method !== "GET" ||
-    url.origin !== self.location.origin
+    url.origin !== self.location.origin ||
+    url.hostname.includes("googleapis.com") ||
+    url.hostname.includes("firebaseapp.com") ||
+    url.hostname.includes("google.com") ||
+    url.hostname.includes("gstatic.com") ||
+    url.pathname.includes("/__/auth") ||
+    url.pathname.includes("firebase")
   ) {
-    return;
+    return; // browser khud handle kare
   }
 
   event.respondWith(
     fetch(request)
       .then((response) => {
-        if (response && response.ok) {
+        if (response && response.ok && request.method === "GET") {
           const copy = response.clone();
           caches.open(CACHE_NAME).then((cache) => {
             cache.put(request, copy);
