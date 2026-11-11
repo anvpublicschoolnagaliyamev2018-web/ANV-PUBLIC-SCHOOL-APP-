@@ -4,8 +4,8 @@ const CACHE_NAME = "anv-school-v1";
 const FILES_TO_CACHE = [
   "./",
   "./manifest.json",
-  "./assets/app-icon-192.png",
-  "./assets/app-icon-512.png"
+  "./app-icon-192.png",
+  "./app-icon-512.png"
 ];
 
 self.addEventListener("install", (event) => {
